@@ -43,7 +43,7 @@ library(keras)
 library(gridExtra)
 ```
 
-## Carregamento e entendimento das bases de dados
+# Carregamento e entendimento das bases de dados
 
 Há 4 bases de treinamento, cada uma para uma condição de uso.
 
@@ -184,7 +184,8 @@ train %>% group_by(engine_id) %>% summarise(max_cycles = max(cycles)) %>% summar
 
 Observa-se que a maior parte (75%) dos motores teve número de ciclos inferior a 229.2, e o número mínimo é 128. Metade dos motores teve vida entre 177 e 229.2 ciclos
 
-## Preparação dos dados
+# Preparação dos dados
+
 ### Análise e seleção de atributos
 
 
@@ -231,6 +232,7 @@ for (i in 5:(length(train_simplificada)-1)){
 
 do.call("grid.arrange", c(lista_plot, top = "Dados dos sensores vs RUL"))
 ```
+
 Nota-se que os sensores 2, 3, 4, 8, 9, 11,13, 15 e 17 tem comportamento crescente com o passar dos ciclos de funcionamento e, consequentemente, um aumento do seu valor está relacionado à redução da RUL. Já os sensores 7, 12, 20 e 21 possuem comportamento decrescente com a RUL. 
 
 
@@ -310,7 +312,6 @@ test_scaled <- cbind(test_filtered[1], test_scaled[,2:15], test_filtered[16])
 
 ```
 
-O Histograma após a padronização dos dados demonstra que essa técnica faz com que variação dos dados se restrinja a uma faixa de valores de mesma grandeza, com média 0 e desvio padrão igual a 1.  
 
 
 ```{r}
@@ -327,6 +328,8 @@ for (i in 3:(length(train_scaled)-1)){
 do.call("grid.arrange", c(lista_plot, top = "Histograma dos dados dos sensores após padronização"))
 
 ```
+
+O Histograma mostra que a variação dos dados se restrinjiu a uma faixa de valores de mesma grandeza, média 0 e desvio padrão 1.  
 
 ### Definição da função erro
 
@@ -362,7 +365,7 @@ func_score <- function(y_true, y_pred, tipo = "treino"){
 
 ```
 
- Criação dos modelos supervisionados
+# Criação dos modelos supervisionados
 
 ### Preparação da base de testes
 
@@ -957,40 +960,13 @@ results_critical <- results %>% filter(status == "Critical")
 
 ```
 
-### Análise para todos os motores e para o conjunto de motores "críticos"
-
-```{r}
-
-methods <- c("Modelo base", "Random Forest", "LSTM 1", "LSTM 2")
-df <- tibble()
-
-#Resultados para todos os motores
-cat(paste("Resultados compilados",sep = "\n"))
-for (metodo in methods) {
-  df <- results %>% filter(method == metodo)
-  print(noquote(""))
-  print(paste0("Para o método ", metodo, ", os resultados foram:"))
-  func_score(df$y_true,df$y_pred, tipo = "teste")
-}
-
-#Resultados para os motores críticos
-cat(paste("Resultados dos motores críticos, RUL <= 50 ciclos",sep = "\n"))
-for (metodo in methods) {
-  df <- results_critical %>% filter(method == metodo)
-  print(noquote(""))
-  print(paste0("Para o método ", metodo, ", os resultados foram:"))
-  func_score(df$y_true,df$y_pred, tipo = "teste")
-}
-
-
-
-```
-
 
 ### Histograma de erros - Motores críticos
 
 ```{r}
 hist_list <- list()
+methods <- c("Modelo base", "Random Forest", "LSTM 1", "LSTM 2")
+
 for (metodo in methods){
   df <- results_critical %>% filter(method == metodo)
   hist_list[[paste0("Histograma de erros - ", metodo)]] <- df %>% 
@@ -1009,4 +985,30 @@ do.call("grid.arrange", c(hist_list, top = "Histograma dos erros"))
 
 ```
 
+### Resultados finais
 
+```{r}
+
+df <- tibble()
+
+#Resultados para todos os motores
+for (metodo in methods) {
+  df <- results %>% filter(method == metodo)
+  print(noquote(""))
+  print(paste0("Para o método ", metodo, ", os resultados foram:"))
+  func_score(df$y_true,df$y_pred, tipo = "teste")
+}
+
+#Resultados para os motores críticos
+for (metodo in methods) {
+  df <- results_critical %>% filter(method == metodo)
+  print(noquote(""))
+  print(paste0("Para o método ", metodo, ", os resultados foram:"))
+  func_score(df$y_true,df$y_pred, tipo = "teste")
+}
+
+```
+
+Os algoritmos de aprendizado de máquina  tiveram redução tanto do RMSE quanto do Score-s em relação ao modelo de referência.  
+
+Dessa forma, este estudo mostra que os modelos de aprendizado de máquina poderiam ser ferramentas úteis para o direcionamento do momento mais adequado de atuação preventiva, levando não somente a redução de custos com corretivas, como também de custos com manutenções desnecessárias.
