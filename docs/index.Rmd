@@ -143,7 +143,7 @@ train_description %>%
   select(-RUL, -engine_id) %>% 
   round(2) %>% 
   kbl(caption = "Estatísticas descritivas") %>% 
-  kable_styling(bootstrap_options = c("striped", "hover"))
+  kable_styling(bootstrap_options = c("basic"))
 
 
 train_description <- 
@@ -173,9 +173,12 @@ train %>% group_by(engine_id) %>% summarise(max_cycles = max(cycles)) %>%
   ggplot()+
   geom_density(mapping = aes(x = max_cycles), color = "blue") +
   theme_light() +
-  labs(title = "Densidade do número máximo de ciclos") +
   xlab("Máximo número de ciclos") +
-  theme(plot.subtitle = element_text(hjust = 0.5))+
+  theme(plot.subtitle = element_text(hjust = 0.5), 
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())+
   scale_x_continuous(breaks = seq(120,380,20))
   
 train %>% group_by(engine_id) %>% summarise(max_cycles = max(cycles)) %>% summary()
@@ -227,6 +230,11 @@ for (i in 5:(length(train_simplificada)-1)){
     geom_line(mapping = aes(x = RUL, y = sensor, color = factor(engine_id)), show.legend = F)+
     scale_x_reverse()+
     theme_bw(base_size=8) +
+    theme(plot.subtitle = element_text(hjust = 0.5), 
+          axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank())+  
     labs(y=paste("sensor",colnames(train_simplificada)[i]))
 }
 
@@ -266,6 +274,11 @@ for (i in 3:(length(train_simplificada)-1)){
     geom_line(mapping = aes(x = RUL, y = sensor, color = factor(engine_id)), show.legend = F)+
     scale_x_reverse()+ 
     theme_bw(base_size=8) +
+    theme(plot.subtitle = element_text(hjust = 0.5),
+          axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank())+
     labs(y=paste("sensor",colnames(train_simplificada)[i]))
 }
 
@@ -290,7 +303,14 @@ ggplot(data = train_temp,aes(x = RUL))+
     scale_x_reverse()+
     labs(y="sensor values",title="sensor 3 - Filtered vs Unfiltered")+
     theme_bw(base_size=8)+
-    theme(plot.title = element_text(hjust = 0.5),legend.position = "bottom", legend.direction = "horizontal")
+    theme(plot.title = element_text(hjust = 0.5),
+          legend.position = "bottom", 
+          legend.direction = "horizontal",
+          axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank())
+
 
 
 ```
@@ -322,6 +342,11 @@ for (i in 3:(length(train_scaled)-1)){
   lista_plot[[paste0("plot", i)]] <- ggplot(data = s, aes(sensor))+
     geom_histogram(show.legend = FALSE)+
     theme_bw(base_size=8) +
+    theme(plot.subtitle = element_text(hjust = 0.5),
+          axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank())+
     labs(x=paste("sensor",colnames(train_scaled)[i]))
 }
 
@@ -403,7 +428,14 @@ lista_plot[["Gráfico de comparação"]] <- df %>%
   theme_light() +
   scale_colour_manual(" ", values=c("#E69F00", "darkred", "blue"))+
   scale_y_continuous(limits = c(0, NA))+
-  theme(legend.position = "bottom", legend.title = element_blank(), legend.key=element_blank(),plot.title = element_text(hjust = 0.5))
+  theme(legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.key=element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())
 
 
 lista_plot[["Histograma de erros"]] <- df %>% 
@@ -412,7 +444,11 @@ lista_plot[["Histograma de erros"]] <- df %>%
   theme_bw(base_size=8)+
   labs(title = "Gráfico (b) - Histograma de erros")+
   theme_light() +
-  theme(plot.title = element_text(hjust = 0.5))+
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())+
   scale_x_continuous(limits = ~ c(-1, 1) * max(abs(.x)))+
   labs (caption = paste0("Range de erros: ", round(min(df$error), 2), " a ",round(max(df$error), 2)))
 
@@ -483,7 +519,14 @@ train_rf %>% filter(engine_id %in% engine_samples) %>%
   labs(x = NULL, title = "Random Forest - Base treinamento")+
   scale_colour_manual(" ", values=c("darkblue", "darkred"))+
   theme_bw()+
-  theme(legend.position = "bottom",legend.title = element_blank(), legend.key=element_blank(),plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.key=element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())+
   facet_grid(rows = vars(engine_id), scales ="free")
 
 
@@ -507,7 +550,14 @@ test_scaled %>%
   labs(x = NULL, title = "Random Forest - Base de teste")+
   scale_colour_manual(" ", values=c("darkblue", "darkred"))+
   theme_bw()+
-  theme(legend.position = "bottom",legend.title = element_blank(), legend.key=element_blank(),plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.key=element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())+
   facet_grid(rows = vars(engine_id), scales ="free")
  
 
@@ -724,7 +774,14 @@ train_LSTM_RUL %>% filter(engine_id %in% engine_samples) %>%
   labs(x = NULL, title = "LSTM - Base de treinamento")+
   scale_colour_manual(" ", values=c("darkblue", "darkred"))+
   theme_bw()+
-  theme(legend.position = "bottom",legend.title = element_blank(), legend.key=element_blank(),plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.key=element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())+
   facet_grid(rows = vars(engine_id), scales ="free")
   
 func_score(as.numeric(train_LSTM_RUL$RUL), as.numeric(train_LSTM_RUL$RUL_pred))
@@ -882,7 +939,11 @@ train_LSTM_RUL2 %>% filter(engine_id %in% engine_samples) %>%
   theme(legend.position = "bottom",
         legend.title = element_blank(),
         legend.key=element_blank(),
-        plot.title = element_text(hjust = 0.5))+
+        plot.title = element_text(hjust = 0.5), 
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())+
   facet_grid(rows = vars(engine_id))
 
 func_score(as.numeric(train_LSTM_RUL2$RUL), as.numeric(train_LSTM_RUL2$RUL_pred))
@@ -975,7 +1036,11 @@ for (metodo in methods){
   theme_bw(base_size=8)+
   labs(subtitle = df$method)+
   theme_light() +
-  theme(plot.subtitle = element_text(hjust = 0.5))+
+  theme(plot.subtitle = element_text(hjust = 0.5),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())+
   scale_x_continuous(limits = ~ c(-1, 1) * max(abs(.x)), breaks = seq(-70,70,10))+
   scale_y_continuous(breaks=seq(1,11,2)) +
   coord_cartesian(ylim = c(0,11), xlim=c(-75,75))
